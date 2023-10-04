@@ -1,1 +1,1 @@
-# rentoza-cocktail-api
+# Rentoza-cocktail-api
