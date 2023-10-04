@@ -1,0 +1,53 @@
+version: '3.11'
+
+services:
+    backend:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: ./docker/backend/Dockerfile
+        volumes:
+            - static_volume:/app/backend/server/django_static
+        ports:
+            - 8000:8000
+        environment:
+            - DATABASE_NAME=${DATABASE_NAME}
+            - DATABASE_USERNAME=${DATABASE_USERNAME}
+            - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+            - DATABASE_HOST=${DATABASE_HOST}
+            - DATABASE_PORT=${DATABASE_PORT}
+            - ALLOWED_HOST_DNS=${ALLOWED_HOST_DNS}
+            - DEBUG=${DEBUG}
+        networks:
+            - backend
+    db:
+        build:
+            context: .
+            dockerfile: ./docker/postgres/Dockerfile
+        restart: always
+        environment:
+            - POSTGRES_USER=${DATABASE_USERNAME}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+            - POSTGRES_DB=${DATABASE_NAME}
+            - POSTGRES_PORT=${DATABASE_PORT}
+        ports:
+            - 5432:5432
+        volumes:
+            - db:/var/lib/postgresql/data
+        networks:
+            - backend
+    frontend:
+        build:
+            context: .
+            dockerfile: ./docker/frontend/Dockerfile
+        ports:
+        - "3000:3000"
+
+volumes:
+    static_volume: {}
+    db: {}
+
+networks:
+    backend:
+        # Use a custom driver which takes special options
+        driver: bridge
