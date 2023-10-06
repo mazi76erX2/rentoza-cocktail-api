@@ -6,8 +6,6 @@ services:
         build:
             context: .
             dockerfile: ./docker/backend/Dockerfile
-        volumes:
-            - static_volume:/app/backend/server/django_static
         ports:
             - 8000:8000
         environment:
